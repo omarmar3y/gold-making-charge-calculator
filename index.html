@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gold Jewelry Making Charge Calculator (EGP)</title>
+<style>
+  :root{
+    --gold:#c9a227;
+    --gold-dark:#9c7d1a;
+    --bg:#faf6ec;
+    --card:#ffffff;
+    --text:#2b2b2b;
+    --muted:#6b6b6b;
+    --border:#e6dcc0;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:'Segoe UI', Tahoma, Arial, sans-serif;
+    background:linear-gradient(180deg,#faf6ec 0%, #f3ead0 100%);
+    color:var(--text);
+    padding:24px 12px 60px;
+  }
+  .container{
+    max-width:720px;
+    margin:0 auto;
+  }
+  header{
+    text-align:center;
+    margin-bottom:24px;
+  }
+  header h1{
+    font-size:1.6rem;
+    color:var(--gold-dark);
+    margin-bottom:4px;
+  }
+  header p{
+    color:var(--muted);
+    font-size:0.9rem;
+  }
+  .mode-switch{
+    display:flex;
+    gap:10px;
+    margin-bottom:22px;
+  }
+  .mode-btn{
+    flex:1;
+    padding:14px 10px;
+    text-align:center;
+    border:2px solid var(--border);
+    border-radius:12px;
+    background:#fff;
+    cursor:pointer;
+    font-size:0.9rem;
+    font-weight:700;
+    color:var(--muted);
+    transition:0.15s;
+  }
+  .mode-btn.active{
+    background:var(--gold);
+    color:#fff;
+    border-color:var(--gold-dark);
+  }
+  .card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:20px 22px;
+    margin-bottom:18px;
+    box-shadow:0 2px 10px rgba(0,0,0,0.04);
+  }
+  .card h2{
+    font-size:1.05rem;
+    margin-top:0;
+    margin-bottom:14px;
+    color:var(--gold-dark);
+    border-bottom:1px solid var(--border);
+    padding-bottom:8px;
+  }
+  .row{
+    display:flex;
+    gap:14px;
+    flex-wrap:wrap;
+    margin-bottom:14px;
+  }
+  .field{
+    flex:1 1 220px;
+  }
+  label{
+    display:block;
+    font-size:0.85rem;
+    font-weight:600;
+    margin-bottom:6px;
+    color:#444;
+  }
+  input[type=number], select{
+    width:100%;
+    padding:10px 12px;
+    border:1px solid var(--border);
+    border-radius:8px;
+    font-size:0.95rem;
+    background:#fffdf8;
+  }
+  input:focus, select:focus{
+    outline:none;
+    border-color:var(--gold);
+    box-shadow:0 0 0 3px rgba(201,162,39,0.15);
+  }
+  .toggle-group{
+    display:flex;
+    gap:8px;
+    margin-bottom:14px;
+  }
+  .toggle-btn{
+    flex:1;
+    padding:9px;
+    text-align:center;
+    border:1px solid var(--border);
+    border-radius:8px;
+    background:#fff;
+    cursor:pointer;
+    font-size:0.85rem;
+    font-weight:600;
+    color:var(--muted);
+    transition:0.15s;
+  }
+  .toggle-btn.active{
+    background:var(--gold);
+    color:#fff;
+    border-color:var(--gold-dark);
+  }
+  .carat-hint{
+    font-size:0.78rem;
+    color:var(--muted);
+    margin-top:4px;
+  }
+  .price-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(100px, 1fr));
+    gap:8px;
+    margin-bottom:10px;
+  }
+  .price-chip{
+    padding:10px 8px;
+    text-align:center;
+    border:1px solid var(--border);
+    border-radius:10px;
+    background:#fff8e6;
+    cursor:pointer;
+    transition:0.15s;
+  }
+  .price-chip:hover{
+    background:var(--gold);
+    color:#fff;
+    border-color:var(--gold-dark);
+  }
+  .price-chip .k{
+    font-size:0.78rem;
+    font-weight:700;
+    color:var(--gold-dark);
+  }
+  .price-chip:hover .k{
+    color:#fff;
+  }
+  .price-chip .p{
+    font-size:0.82rem;
+    font-weight:700;
+    margin-top:2px;
+  }
+  .source-line{
+    font-size:0.78rem;
+    color:var(--muted);
+    margin-top:8px;
+  }
+  .source-line a{
+    color:var(--gold-dark);
+    font-weight:600;
+    text-decoration:none;
+  }
+  .source-line a:hover{
+    text-decoration:underline;
+  }
+  .result-card{
+    background:linear-gradient(135deg,#fff9e8,#fdf3d0);
+    border:1px solid var(--gold);
+  }
+  .result-line{
+    display:flex;
+    justify-content:space-between;
+    padding:8px 0;
+    font-size:0.95rem;
+    border-bottom:1px dashed var(--border);
+  }
+  .result-line:last-child{
+    border-bottom:none;
+  }
+  .result-line .label{
+    color:var(--muted);
+    font-weight:500;
+  }
+  .result-line .value{
+    font-weight:600;
+  }
+  .total-line{
+    margin-top:10px;
+    padding-top:14px;
+    border-top:2px solid var(--gold);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+  .total-line .label{
+    font-size:1rem;
+    font-weight:700;
+    color:var(--gold-dark);
+  }
+  .total-line .value{
+    font-size:1.5rem;
+    font-weight:800;
+    color:var(--gold-dark);
+  }
+  .hero-line{
+    margin-bottom:0;
+    padding:16px;
+    border-radius:10px 10px 0 0;
+    background:#fff;
+    border:2px solid var(--gold);
+    border-bottom:none;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+  .hero-line .label{
+    font-size:1rem;
+    font-weight:700;
+    color:var(--gold-dark);
+  }
+  .hero-line .value{
+    font-size:1.8rem;
+    font-weight:900;
+    color:var(--gold-dark);
+  }
+  .hero-sub-line{
+    margin-bottom:14px;
+    padding:12px 16px;
+    border-radius:0 0 10px 10px;
+    background:#fffdf5;
+    border:2px solid var(--gold);
+    border-top:1px dashed var(--gold);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+  .hero-sub-line .label{
+    font-size:0.9rem;
+    font-weight:700;
+    color:#6b5716;
+  }
+  .hero-sub-line .value{
+    font-size:1.2rem;
+    font-weight:800;
+    color:#6b5716;
+  }
+  .note{
+    font-size:0.78rem;
+    color:var(--muted);
+    margin-top:16px;
+    line-height:1.5;
+  }
+  .note a{
+    color:var(--gold-dark);
+    font-weight:600;
+  }
+  .badge{
+    display:inline-block;
+    background:#eee;
+    color:#555;
+    font-size:0.7rem;
+    padding:2px 8px;
+    border-radius:10px;
+    margin-left:6px;
+  }
+  .warn{
+    color:#b23b3b;
+    font-weight:700;
+  }
+  footer{
+    text-align:center;
+    font-size:0.75rem;
+    color:var(--muted);
+    margin-top:20px;
+  }
+  .hidden{ display:none !important; }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>🪩 Gold Jewelry Making Charge Calculator</h1>
+    <p>Calculate gold value, making charge (مصنعية), and total price — all in Egyptian Pound (EGP)</p>
+  </header>
+
+  <div class="mode-switch">
+    <div class="mode-btn" id="btnForward" onclick="setAppMode('forward')">➡️ Enter making charge → get total price</div>
+    <div class="mode-btn active" id="btnReverse" onclick="setAppMode('reverse')">⬅️ Enter full price → get making charge</div>
+  </div>
+
+  <div class="card">
+    <h2>1. Gold Price Source (Manual Entry)</h2>
+    <div class="field">
+      <label>Current 24K gold price per gram (EGP) <span class="badge">enter today's market rate</span></label>
+      <input type="number" id="price24k" value="7209.75" step="0.01" min="0">
+    </div>
+    <p class="carat-hint" style="margin-top:12px;margin-bottom:8px;">Reference prices by carat — click one to load its 24K-equivalent base price:</p>
+    <div class="price-grid">
+      <div class="price-chip" onclick="setPreset(7209.75)"><div class="k">24K</div><div class="p">7,209.75</div></div>
+      <div class="price-chip" onclick="setPreset(7209.75)"><div class="k">22K</div><div class="p">6,604.13</div></div>
+      <div class="price-chip" onclick="setPreset(7209.75)"><div class="k">21K</div><div class="p">6,308.53</div></div>
+      <div class="price-chip" onclick="setPreset(7209.75)"><div class="k">18K</div><div class="p">5,407.31</div></div>
+      <div class="price-chip" onclick="setPreset(7209.75)"><div class="k">14K</div><div class="p">4,217.70</div></div>
+      <div class="price-chip" onclick="setPreset(7209.75)"><div class="k">12K</div><div class="p">3,604.87</div></div>
+    </div>
+    <p class="source-line">
+      Prices shown per gram in EGP, last confirmed Thu 17 Sep 2026, 04:43 GMT. Source:
+      <a href="https://www.goldrate24.com/gold-prices/middle-east/egypt/" target="_blank" rel="noopener">GoldRate24 – Gold Price Today in Egypt</a>.
+      Update the field above with today's rate before calculating.
+    </p>
+    <p class="carat-hint">Egyptian jewelers usually quote the 24K (pure gold) price. This calculator derives 22K/21K/18K/14K/12K/9K prices automatically from the 24K base using standard purity ratios.</p>
+  </div>
+
+  <div class="card">
+    <h2>2. Jewelry Details</h2>
+    <div class="row">
+      <div class="field">
+        <label>Weight (grams)</label>
+        <input type="number" id="weight" value="10" step="0.01" min="0">
+      </div>
+      <div class="field">
+        <label>Gold Carat / Purity</label>
+        <select id="carat">
+          <option value="1">24K (999 - Pure Gold)</option>
+          <option value="0.916">22K (916)</option>
+          <option value="0.875" selected>21K (875) - Most common in Egypt</option>
+          <option value="0.75">18K (750)</option>
+          <option value="0.585">14K (585)</option>
+          <option value="0.5">12K (500)</option>
+          <option value="0.375">9K (375)</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- FORWARD MODE: charge -> total -->
+  <div class="card hidden" id="forwardCard">
+    <h2>3. Making Charge (مصنعية)</h2>
+    <div class="toggle-group">
+      <div class="toggle-btn active" id="btnPerGram" onclick="setChargeMode('per_gram')">EGP per gram</div>
+      <div class="toggle-btn" id="btnPercent" onclick="setChargeMode('percent')">% of gold value</div>
+      <div class="toggle-btn" id="btnFlat" onclick="setChargeMode('flat')">Flat amount</div>
+    </div>
+    <div class="field">
+      <label id="chargeLabel">Making charge per gram (EGP)</label>
+      <input type="number" id="chargeValue" value="150" step="0.01" min="0">
+    </div>
+  </div>
+
+  <!-- REVERSE MODE: total -> charge -->
+  <div class="card" id="reverseCard">
+    <h2>3. Final Price Paid</h2>
+    <div class="field">
+      <label>Total price you paid / will pay for the item (EGP)</label>
+      <input type="number" id="finalPrice" value="80000" step="0.01" min="0">
+    </div>
+    <p class="carat-hint">Enter the full receipt/quoted price for the piece. The calculator will back-solve the making charge, after removing the pure gold value, VAT, and any stone charges.</p>
+  </div>
+
+  <div class="card">
+    <h2>4. Additional Costs (optional)</h2>
+    <div class="row">
+      <div class="field">
+        <label>VAT / Tax on making charge (%)</label>
+        <input type="number" id="vat" value="0" step="0.1" min="0">
+      </div>
+      <div class="field">
+        <label>Stone / other charges (EGP, flat)</label>
+        <input type="number" id="stoneCharge" value="0" step="0.01" min="0">
+      </div>
+    </div>
+  </div>
+
+  <div class="card result-card hidden" id="forwardResult">
+    <h2>Result</h2>
+    <div class="result-line"><span class="label">Effective gold price / gram (this carat)</span><span class="value" id="outCaratPrice">-</span></div>
+    <div class="result-line"><span class="label">Gold value (weight × price)</span><span class="value" id="outGoldValue">-</span></div>
+    <div class="result-line"><span class="label">Making charge (مصنعية)</span><span class="value" id="outMaking">-</span></div>
+    <div class="result-line"><span class="label">VAT on making charge</span><span class="value" id="outVat">-</span></div>
+    <div class="result-line"><span class="label">Stone / other charges</span><span class="value" id="outStone">-</span></div>
+    <div class="total-line"><span class="label">Total Price</span><span class="value" id="outTotal">-</span></div>
+  </div>
+
+  <div class="card result-card" id="reverseResult">
+    <h2>Result — Making Charge Breakdown</h2>
+    <div class="hero-line"><span class="label">Making Charge per Gram</span><span class="value" id="rOutMakingPerGram">-</span></div>
+    <div class="hero-sub-line"><span class="label">Full Making Charge (Total)</span><span class="value" id="rOutMaking">-</span></div>
+    <div class="result-line"><span class="label">Effective gold price / gram (this carat)</span><span class="value" id="rOutCaratPrice">-</span></div>
+    <div class="result-line"><span class="label">Gold value (weight × price)</span><span class="value" id="rOutGoldValue">-</span></div>
+    <div class="result-line"><span class="label">Stone / other charges (removed)</span><span class="value" id="rOutStone">-</span></div>
+    <div class="result-line"><span class="label">Amount left for making charge + VAT</span><span class="value" id="rOutRemainder">-</span></div>
+    <div class="result-line"><span class="label">Making charge as % of gold value</span><span class="value" id="rOutMakingPct">-</span></div>
+  </div>
+
+  <p class="note">
+    ⚠️ This tool uses manual price entry — no live API calls. The reference prices above were pulled from
+    <a href="https://www.goldrate24.com/gold-prices/middle-east/egypt/" target="_blank" rel="noopener">GoldRate24</a> at the time this page was built and will go stale — always click through to the source (or check goldpricez.com, isagha.com, or your local jeweler) for the live rate before calculating.
+    Making charge (مصنعية) conventions vary: some jewelers charge a flat EGP amount per gram of the finished piece, others charge a percentage of the gold value, and some quote one flat fee for the whole item. Always confirm which method your jeweler uses.
+    In reverse mode, the formula used is: Making Charge = (Final Price − Gold Value − Stone Charges) ÷ (1 + VAT%), and Making Charge per Gram = Making Charge ÷ Weight.
+  </p>
+
+  <footer>Built for Egyptian Pound (EGP) gold calculations · Update the 24K price manually for accuracy</footer>
+</div>
+
+<script>
+let chargeMode = 'per_gram';
+let appMode = 'reverse';
+
+function setAppMode(m){
+  appMode = m;
+  document.getElementById('btnForward').classList.toggle('active', m==='forward');
+  document.getElementById('btnReverse').classList.toggle('active', m==='reverse');
+  document.getElementById('forwardCard').classList.toggle('hidden', m!=='forward');
+  document.getElementById('reverseCard').classList.toggle('hidden', m!=='reverse');
+  document.getElementById('forwardResult').classList.toggle('hidden', m!=='forward');
+  document.getElementById('reverseResult').classList.toggle('hidden', m!=='reverse');
+  calculate();
+}
+
+function setChargeMode(m){
+  chargeMode = m;
+  document.getElementById('btnPerGram').classList.toggle('active', m==='per_gram');
+  document.getElementById('btnPercent').classList.toggle('active', m==='percent');
+  document.getElementById('btnFlat').classList.toggle('active', m==='flat');
+  const label = document.getElementById('chargeLabel');
+  if(m==='per_gram') label.textContent = 'Making charge per gram (EGP)';
+  else if(m==='percent') label.textContent = 'Making charge (% of gold value)';
+  else label.textContent = 'Flat making charge for whole item (EGP)';
+  calculate();
+}
+
+function setPreset(v){
+  document.getElementById('price24k').value = v;
+  calculate();
+}
+
+function fmt(n){
+  if(!isFinite(n)) n = 0;
+  return n.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' EGP';
+}
+
+function calculate(){
+  const price24 = parseFloat(document.getElementById('price24k').value) || 0;
+  const weight = parseFloat(document.getElementById('weight').value) || 0;
+  const purity = parseFloat(document.getElementById('carat').value) || 1;
+  const vatPct = parseFloat(document.getElementById('vat').value) || 0;
+  const stone = parseFloat(document.getElementById('stoneCharge').value) || 0;
+
+  const caratPrice = price24 * purity;
+  const goldValue = caratPrice * weight;
+
+  if(appMode === 'forward'){
+    const chargeValue = parseFloat(document.getElementById('chargeValue').value) || 0;
+    let making = 0;
+    if(chargeMode === 'per_gram') making = chargeValue * weight;
+    else if(chargeMode === 'percent') making = goldValue * (chargeValue/100);
+    else making = chargeValue;
+
+    const vatAmount = making * (vatPct/100);
+    const total = goldValue + making + vatAmount + stone;
+
+    document.getElementById('outCaratPrice').textContent = fmt(caratPrice) + ' /g';
+    document.getElementById('outGoldValue').textContent = fmt(goldValue);
+    document.getElementById('outMaking').textContent = fmt(making);
+    document.getElementById('outVat').textContent = fmt(vatAmount);
+    document.getElementById('outStone').textContent = fmt(stone);
+    document.getElementById('outTotal').textContent = fmt(total);
+  } else {
+    const finalPrice = parseFloat(document.getElementById('finalPrice').value) || 0;
+    const remainder = finalPrice - goldValue - stone;
+    const making = remainder / (1 + vatPct/100);
+    const makingPerGram = weight > 0 ? making / weight : 0;
+    const makingPct = goldValue > 0 ? (making / goldValue) * 100 : 0;
+
+    document.getElementById('rOutCaratPrice').textContent = fmt(caratPrice) + ' /g';
+    document.getElementById('rOutGoldValue').textContent = fmt(goldValue);
+    document.getElementById('rOutStone').textContent = fmt(stone);
+    document.getElementById('rOutRemainder').textContent = fmt(remainder);
+
+    const makingEl = document.getElementById('rOutMaking');
+    const makingPerGramEl = document.getElementById('rOutMakingPerGram');
+    if(making < 0){
+      makingEl.textContent = fmt(making) + ' ⚠ (final price is lower than gold value — check inputs)';
+      makingEl.classList.add('warn');
+      makingPerGramEl.textContent = fmt(makingPerGram) + ' /g ⚠';
+      makingPerGramEl.classList.add('warn');
+    } else {
+      makingEl.textContent = fmt(making);
+      makingEl.classList.remove('warn');
+      makingPerGramEl.textContent = fmt(makingPerGram) + ' /g';
+      makingPerGramEl.classList.remove('warn');
+    }
+    document.getElementById('rOutMakingPct').textContent = makingPct.toFixed(2) + ' %';
+  }
+}
+
+document.querySelectorAll('input, select').forEach(el => {
+  el.addEventListener('input', calculate);
+});
+
+calculate();
+</script>
+</body>
+</html>
